@@ -1,0 +1,103 @@
+<div [attr.data-bs-theme]="isDarkMode ? 'dark' : 'light'">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-diagram-2-fill text-primary me-2"></i>
+                SocialNet
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <form class="d-flex mx-auto mt-3 mt-lg-0" style="max-width: 400px;">
+                    <div class="input-group">
+                        <span class="input-group-text border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="search" class="form-control border-start-0" placeholder="Search users..."
+                            [(ngModel)]="searchQuery" name="search">
+                    </div>
+                </form>
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-house-door-fill"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-bell"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-envelope"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" (click)="toggleTheme()">
+                            <i class="bi" [class.bi-moon-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode">Mode</i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <img [src]="currentUser.photo_profile" class="rounded-circle" width="24" height="24"
+                                [alt]="currentUser.photo_profile">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="container" style="margin-top: 15vh;">
+    <div class="d-flex flex-column mb-3">
+        <div class="col-md-6 mb-4" *ngFor="let post of posts">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <img [src]="post.photo_profile" class="rounded-circle me-2" width="40" height="40" alt="Foto de perfil">
+                    <div>
+                        <h6 class="mb-0">{{ post.name }}</h6>
+                        <small class="text-muted">&#64;{{ post.username }}</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>{{ post.content }}</p>
+                    <div *ngIf="post.images.length > 0">
+                        <img *ngFor="let img of post.images" [src]="img" class="img-fluid rounded mb-2" alt="Imagen del post">
+                    </div>
+                    <small class="text-muted">{{ post.createdAt | date:'medium' }}</small>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>❤️ {{ post.like_count }}</span>
+                    <span (click)="toggleComments(post.id)" style="cursor: pointer;">
+                        💬 {{ post.comment_count }}
+                    </span>
+                    <span *ngIf="post.tags.length > 0">🏷️ {{ post.tags.join(', ') }}</span>
+                </div>
+                <div *ngIf="activePostId === post.id" class="p-3 border-top">
+                    <div *ngFor="let comment of comments" class="d-flex align-items-start mb-2">
+                        <img [src]="comment.photo_profile" class="rounded-circle me-2" width="30" height="30" alt="Foto perfil">
+                        <div>
+                            <strong>&#64;{{ comment.username }}</strong>
+                            <p class="mb-1">{{ comment.comment }}</p>
+                            <small class="text-muted">{{ comment.created_at | date:'medium' }}</small>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex align-items-center">
+                        <input type="text" class="form-control me-2" placeholder="Escribe un comentario..." [(ngModel)]="newComment">
+                        <button class="btn btn-primary" (click)="addComment(post.id)">Enviar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
