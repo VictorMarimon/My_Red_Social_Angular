@@ -1,0 +1,70 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">SocialNet</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="card-title text-center mb-4">Register</h2>
+      <form (ngSubmit)="register()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" [(ngModel)]="user.name" name="name" required />
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" [(ngModel)]="user.username" name="username" required />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" [(ngModel)]="user.email" name="email" required
+            [pattern]="emailPattern" title="Please enter a valid email address (e.g. example@domain.com)" />
+          <div *ngIf="user.email && !isEmailValid()" class="text-danger">
+            Please enter a valid email address.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="phone_number" class="form-label">Phone Number</label>
+          <input type="text" class="form-control" id="phone_number" [(ngModel)]="user.phone" name="phone_number"
+            required />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="user.password" name="password" required
+            [ngClass]="{'is-invalid': !isPasswordValid() && user.password && user.password.length > 0}" />
+          <div *ngIf="user.password && !isPasswordValid()" class="text-danger">
+            Password must be between 8-12 characters with at least one uppercase letter, one lowercase letter, one
+            number, and one special character (%$;&.,#).
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="birthday" class="form-label">Birthday</label>
+          <input type="date" class="form-control" id="birthday" [(ngModel)]="user.birthday" name="birthday" required
+            [max]="maxBirthday" />
+        </div>
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="confirmPassword" [(ngModel)]="confirmPassword"
+            name="confirmPassword" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
