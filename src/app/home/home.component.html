@@ -1,7 +1,7 @@
 <div [attr.data-bs-theme]="isDarkMode ? 'dark' : 'light'">
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top border-bottom">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top border-bottom card">
+        <div class="container ">
+            <a class="navbar-brand d-flex align-items-center" href="/home">
                 <i class="bi bi-diagram-2-fill text-primary me-2"></i>
                 SocialNet
             </a>
@@ -42,8 +42,7 @@
                                 [alt]="currentUser.photo_profile">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -56,46 +55,214 @@
         </div>
     </nav>
 </div>
-<div class="container" style="margin-top: 15vh;">
-    <div class="d-flex flex-column mb-3">
-        <div class="col-md-6 mb-4" *ngFor="let post of posts">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <img [src]="post.photo_profile" class="rounded-circle me-2" width="40" height="40" alt="Foto de perfil">
-                    <div>
-                        <h6 class="mb-0">{{ post.name }}</h6>
-                        <small class="text-muted">&#64;{{ post.username }}</small>
+<div class="container-fluid" style="margin-top: 4rem;">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="position-sticky" style="top: 5rem;">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0">Suggested users</h5>
                     </div>
-                </div>
-                <div class="card-body">
-                    <p>{{ post.content }}</p>
-                    <div *ngIf="post.images.length > 0">
-                        <img *ngFor="let img of post.images" [src]="img" class="img-fluid rounded mb-2" alt="Imagen del post">
-                    </div>
-                    <small class="text-muted">{{ post.createdAt | date:'medium' }}</small>
-                </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <span>❤️ {{ post.like_count }}</span>
-                    <span (click)="toggleComments(post.id)" style="cursor: pointer;">
-                        💬 {{ post.comment_count }}
-                    </span>
-                    <span *ngIf="post.tags.length > 0">🏷️ {{ post.tags.join(', ') }}</span>
-                </div>
-                <div *ngIf="activePostId === post.id" class="p-3 border-top">
-                    <div *ngFor="let comment of comments" class="d-flex align-items-start mb-2">
-                        <img [src]="comment.photo_profile" class="rounded-circle me-2" width="30" height="30" alt="Foto perfil">
-                        <div>
-                            <strong>&#64;{{ comment.username }}</strong>
-                            <p class="mb-1">{{ comment.comment }}</p>
-                            <small class="text-muted">{{ comment.created_at | date:'medium' }}</small>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @for (user of suggestedUsers | slice:0:(showAll ? suggestedUsers.length : 3); track user.id) {
+                                <div class="list-group-item border-start-0 border-end-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <img [src]="user.photo_profile || 'assets/default-avatar.png'"
+                                                 class="rounded-circle me-2"
+                                                 style="width: 40px; height: 40px; object-fit: cover;"
+                                                 [alt]="user.name">
+                                            <div>
+                                                <h6 class="mb-0 text-truncate" style="max-width: 120px;">{{user.name}}</h6>
+                                                <small class="text-muted">&#64;{{user.username}}</small>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm rounded-pill px-3" 
+                                                (click)="followUser(user.id)"
+                                                [disabled]="isFollowing[user.id]">
+                                            {{ isFollowing[user.id] ? 'Following' : 'Follow' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            } @empty {
+                                <div class="text-center py-4">
+                                    <p class="text-muted mb-0">No suggestions available</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="text-center p-2" *ngIf="suggestedUsers.length > 3">
+                            <button class="btn btn-link text-decoration-none" (click)="toggleShowAll()">
+                                {{ showAll ? 'Show less' : 'Show more' }}
+                                <i class="bi" [class.bi-chevron-down]="!showAll" [class.bi-chevron-up]="showAll"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="mt-3 d-flex align-items-center">
-                        <input type="text" class="form-control me-2" placeholder="Escribe un comentario..." [(ngModel)]="newComment">
-                        <button class="btn btn-primary" (click)="addComment(post.id)">Enviar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">Create new publication</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <textarea 
+                            class="form-control border-0 bg-light"
+                            rows="3" 
+                            placeholder="What do you want to share?"
+                            [(ngModel)]="newPostContent"
+                            minlength="5"
+                            maxlength="500"
+                            #contentInput="ngModel">
+                        </textarea>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="text-danger" *ngIf="contentInput.errors?.['minlength']">
+                                Content must be at least 5 characters long
+                            </small>
+                            <small [class.text-danger]="newPostContent.length < 5 || newPostContent.length > 500" 
+                                   [class.text-muted]="newPostContent.length >= 5 && newPostContent.length <= 500">
+                                {{newPostContent.length}}/500
+                            </small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input 
+                                type="url" 
+                                class="form-control"
+                                placeholder="Add Image URLs"
+                                [(ngModel)]="newImageUrl">
+                            <button 
+                                class="btn btn-outline-primary"
+                                (click)="addImageUrl()">
+                                <i class="bi bi-image me-1"></i>
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3" *ngIf="imageUrls.length > 0">
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4" *ngFor="let url of imageUrls; let i = index">
+                                <div class="position-relative rounded overflow-hidden">
+                                    <img [src]="url" 
+                                         class="img-fluid w-100" 
+                                         style="height: 150px; object-fit: cover;">
+                                    <button 
+                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle"
+                                        style="width: 24px; height: 24px; padding: 0;"
+                                        (click)="removeImage(i)">
+                                        ×
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input 
+                            type="text" 
+                            class="form-control bg-light"
+                            placeholder="Add tags (separated by comma)" 
+                            [(ngModel)]="newPostTags">
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button 
+                            class="btn btn-primary px-4 rounded-pill"
+                            [disabled]="isSubmitting || newPostContent.length < 5 || newPostContent.length > 500"
+                            (click)="createPost()">
+                            <i class="bi bi-send me-1"></i>
+                            {{ isSubmitting ? 'Publishing...' : 'Publish' }}
+                        </button>
                     </div>
                 </div>
-
+            </div>
+            <div class="d-flex flex-column gap-4">
+                @for (post of posts; track post.id) {
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <div class="d-flex align-items-center">
+                                <img [src]="post.photo_profile" 
+                                     class="rounded-circle me-2" 
+                                     width="40" 
+                                     height="40" 
+                                     style="object-fit: cover;"
+                                     [alt]="post.name">
+                                <div>
+                                    <h6 class="mb-0">{{ post.name }}</h6>
+                                    <small class="text-muted">&#64;{{ post.username }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">{{ post.content }}</p>
+                            @if (post.images.length > 0) {
+                                <div class="row g-2 mb-3">
+                                    @for (img of post.images; track img) {
+                                        <div class="col-md-6">
+                                            <img [src]="img" 
+                                                 class="img-fluid rounded" 
+                                                 style="width: 100%; height: 200px; object-fit: cover;"
+                                                 alt="Post image">
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            @if (post.tags.length > 0) {
+                                <div class="mb-2">
+                                    @for (tag of post.tags; track tag) {
+                                        <span class="badge bg-light text-primary me-1">
+                                            #{{ tag }}
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            <small class="text-muted">{{ post.createdAt | date:'medium' }}</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-link text-decoration-none">
+                                    <i class="bi bi-heart me-1"></i>
+                                    ❤️ {{ post.like_count }}
+                                </button>
+                                <button class="btn btn-link text-decoration-none" (click)="toggleComments(post.id)">
+                                    <i class="bi bi-chat me-1"></i>
+                                    💬 {{ post.comment_count }}
+                                </button>
+                            </div>
+                        </div>
+                        @if (activePostId === post.id) {
+                            <div class="border-top p-3">
+                                @for (comment of comments; track comment.id) {
+                                    <div class="d-flex mb-3">
+                                        <img [src]="comment.photo_profile" 
+                                             class="rounded-circle me-2" 
+                                             width="32" 
+                                             height="32"
+                                             style="object-fit: cover;"
+                                             alt="Foto perfil">
+                                        <div class="flex-grow-1">
+                                            <div class="bg-light rounded p-2">
+                                                <strong class="d-block">&#64;{{ comment.username }}</strong>
+                                                <p class="mb-1">{{ comment.comment }}</p>
+                                                <small class="text-muted">{{ comment.created_at | date:'medium' }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="d-flex gap-2 mt-3">
+                                    <input type="text" 
+                                           class="form-control bg-light"
+                                           placeholder="Write a review..." 
+                                           [(ngModel)]="newComment">
+                                    <button class="btn btn-primary px-4" (click)="addComment(post.id)">
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
