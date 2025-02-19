@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Post } from '../models/post';
 import { PostDTO } from '../models/dto/post-dto';
 import { PostsFollowingUsers } from '../models/dto/posts-following-users';
+import { PostUserDto } from '../models/dto/post-user-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,15 +20,43 @@ export class PostService {
     }
   
     addPost(newPost: PostDTO): Observable<Post>{
-      return this.clienteHttp.post<Post>(this.urlBase, newPost);
+      return this.clienteHttp.post<Post>(this.urlBase, newPost, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+        },
+        withCredentials: true  
+      });
+    }
+
+    updatePost(id: number, updatedPost: PostDTO): Observable<PostDTO>{
+      return this.clienteHttp.put<PostDTO>(`${this.urlBase}/${id}`, updatedPost, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+        },
+        withCredentials: true  
+      });
     }
   
     deletePost(id: number): Observable<{deleted: boolean}>{
-      return this.clienteHttp.delete<{deleted: boolean}>(`${this.urlBase}/${id}`);
+      return this.clienteHttp.delete<{deleted: boolean}>(`${this.urlBase}/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+        },
+        withCredentials: true  
+      });
     }
 
-    getPostsUsersFollowing(): Observable<PostsFollowingUsers[]>{
-      return this.clienteHttp.get<PostsFollowingUsers[]>(`${this.urlBase}/juanperez`, {
+    getPostsUsersFollowing(username:string): Observable<PostsFollowingUsers[]>{
+      return this.clienteHttp.get<PostsFollowingUsers[]>(`${this.urlBase}/${username}`, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+        },
+        withCredentials: true  
+      })
+    }
+
+    getPostsUser(): Observable<PostUserDto[]>{
+      return this.clienteHttp.get<PostUserDto[]>(`${this.urlBase}/user/${sessionStorage.getItem('username')}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
         },
