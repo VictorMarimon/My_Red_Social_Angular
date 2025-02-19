@@ -1,5 +1,5 @@
 export class TagDTO {
-    id:number;
+    id?: number;
     tag:string;
     post_tag_id:number;
 }

@@ -1,5 +1,5 @@
 export class ImageDTO {
-    id:number;
+    id?: number;
     image:string;
     post_image_id:number;
 }

@@ -8,7 +8,7 @@ export class User {
     name: string;
     username: string;
     email: string;
-    phone: string;
+    phone_number: string;
     password: string;
     biography: string;
     photo_profile: string;
