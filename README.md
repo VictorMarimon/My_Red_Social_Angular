@@ -1,27 +1,35 @@
-# MyRedSocialAngular
+# My Social Network - Frontend (Angular)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
+This is the frontend of the "My Social Network" application, built with Angular. It provides the user interface for authentication, posts, and user interactions.
 
-## Development server
+## Technologies Used
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Angular** (TypeScript, RxJS, Angular Material)
+- **CSS Framework**: Bootstrap / Tailwind
+- **State Management**: NgRx (if applicable)
+- **API Communication**: HTTPClient
 
-## Code scaffolding
+## Installation and Setup
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/VictorMarimon/My_Red_Social_Angular.git
+   cd My_Red_Social_Angular
+   ```
 
-## Build
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+3. Run the development server:
+   ```sh
+   ng serve
+   ```
+   The application will be available at `http://localhost:4200/`.
 
-## Running unit tests
+## Backend Repository
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The backend of this application can be found in the following repository:
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+[Backend - My Social Network](https://github.com/VictorMarimon/Mi_Red_Social_Spring)
